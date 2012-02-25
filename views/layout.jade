@@ -1,0 +1,16 @@
+!!! 5
+html
+  head
+    title Instafeed
+    link(rel="stylesheet", href="/static/styles/reset.css", type="text/css")
+    link(rel="stylesheet", href="/static/styles/master.css", type="text/css")
+    script(src="/socket.io/socket.io.js", type="text/javascript")
+    script(src="/static/scripts/jquery-1.5.min.js", type="text/javascript")
+    script(src="/static/scripts/master.js", type="text/javascript")
+    script( type="text/javascript")
+      //- socket.connect();
+      var socket = io.connect();
+      $(document).ready(Media.positionAll);
+  body
+    #wrap
+      !{body}
