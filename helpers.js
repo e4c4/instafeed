@@ -2,7 +2,7 @@ var redis = require('redis');
 var settings = require('./settings');
 var crypto = require('crypto');
 
-var redisClient = redis.createClient(settings.REDIS_PORT, settings.REDIS_HOST);
+//var redisClient = redis.createClient(settings.REDIS_PORT, settings.REDIS_HOST);
 
 if (process.env.REDISTOGO_URL) {
 	var redisClient = require('redis-url').createClient(process.env.REDISTOGO_URL);
