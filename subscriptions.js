@@ -15,7 +15,11 @@ var fs = require('fs'),
 	  io.set("polling duration", 10); 
 	});
 
-app.listen(3000);
+if (process.env.REDISTOGO_URL) {
+	app.listen();
+} else {
+	app.listen(3000);
+}
 
 // We use Redis's pattern subscribe command to listen for signals
 // notifying us of new updates.
