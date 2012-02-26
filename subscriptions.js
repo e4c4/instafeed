@@ -8,17 +8,15 @@ var fs = require('fs'),
     subscriptionPattern = 'channel:*',
     //socket = io.listen(app);
 	// socket.io v7+ change
-	io = require('socket.io');
-
-// for Heroku
-io.configure(function () { 
-  io.set("transports", ["xhr-polling"]); 
-  io.set("polling duration", 10); 
-}),
-io.listen(app);
+	io = require('socket.io').listen(app)
+	// for Heroku
+	io.configure(function () { 
+	  io.set("transports", ["xhr-polling"]); 
+	  io.set("polling duration", 10); 
+	});
 
 if (process.env.REDISTOGO_URL) {
-	app.listen();
+	app.listen(settings.appPort);
 } else {
 	app.listen(3000);
 }
