@@ -11,6 +11,8 @@ var url = require('url'),
   helpers = require('./helpers'),
   subscriptions = require('./subscriptions');
 
+var https = require('https');
+
 var app = settings.app;
 
 
@@ -83,11 +85,32 @@ app.post('/callbacks/tag/:tagName', function(request, response){
   response.send('OK');
 });
 
+// Accept a param on the home page for the term tag to use for grabbing images
+app.get('/:tagName', function(request, response){
+  // POST term to Instagram to create subscription
+  var opts = {
+    host: 'api.instagram.com',
+    port: 443,
+    method: 'POST',
+    path: '/v1/subscriptions/',
+    headers: {}
+  };
+  var req = https.request(opts);
+  req.write('client_id=' + settings.CLIENT_ID + '&client_secret=' + settings.CLIENT_SECRET + '&object=tag&object_id=' + request.params.tagName + '&aspect=media&callback_url=http://' + settings.CALLBACK_HOST + '/callbacks/tag/' + request.params.tagName);
+  req.end();
+
+  helpers.getMedia(function(error, media){
+  response.render('geo.jade', {
+        locals: { images: media, tag: request.params.tagName }
+    });
+  });
+});
+
 // Render the home page
 app.get('/', function(request, response){
   helpers.getMedia(function(error, media){
   response.render('geo.jade', {
-        locals: { images: media }
+        locals: { images: media, tag: "" }
     });
   });
 });

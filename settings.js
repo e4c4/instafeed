@@ -7,12 +7,19 @@ exports.app = app;
 exports.appPort = process.env.IG_APP_PORT || 3000;
 exports.CLIENT_ID = process.env.IG_CLIENT_ID || 'CLIENT_ID'
 exports.CLIENT_SECRET = process.env.IG_CLIENT_SECRET || 'CLIENT_SECRET';
+exports.CALLBACK_HOST = process.env.IG_CALLBACK_HOST;
 exports.httpClient = (process.env.IG_USE_INSECURE ? require('http') : require('https'));
 exports.apiHost = process.env.IG_API_HOST || 'api.instagram.com';
 exports.apiPort = process.env.IG_API_PORT || null;
 exports.basePath = process.env.IG_BASE_PATH || '';
-exports.REDIS_PORT = 6486;
-exports.REDIS_HOST = '127.0.0.1';
+if (process.env.REDISTOGO_URL) {
+  var redis = require('redis-url').connect(process.env.REDISTOGO_URL);
+} else {
+  exports.REDIS_PORT = 6486;
+  exports.REDIS_HOST = '127.0.0.1';
+  var redis = require("redis"); //.createClient();
+}
+
 exports.debug = true;
 
 app.set('view engine', 'jade');

@@ -1,5 +1,5 @@
-var redis = require('redis'),
-    fs = require('fs'),
+//var redis = require('redis'),
+var fs = require('fs'),
     jade = require('jade'),
     //io = require('socket.io'),
     settings = require('./settings'),
@@ -9,6 +9,11 @@ var redis = require('redis'),
     //socket = io.listen(app);
 	// socket.io v7+ change
 	io = require('socket.io').listen(app)
+	// for Heroku
+	io.configure(function () { 
+	  io.set("transports", ["xhr-polling"]); 
+	  io.set("polling duration", 10); 
+	});
 
 app.listen(3000);
 
