@@ -12,12 +12,10 @@ exports.httpClient = (process.env.IG_USE_INSECURE ? require('http') : require('h
 exports.apiHost = process.env.IG_API_HOST || 'api.instagram.com';
 exports.apiPort = process.env.IG_API_PORT || null;
 exports.basePath = process.env.IG_BASE_PATH || '';
-if (process.env.REDISTOGO_URL) {
-  var redis = require('redis-url').connect(process.env.REDISTOGO_URL);
-} else {
+if (!process.env.REDISTOGO_URL) {
   exports.REDIS_PORT = 6486;
   exports.REDIS_HOST = '127.0.0.1';
-  var redis = require("redis"); //.createClient();
+  //var redis = require("redis"); //.createClient();
 }
 
 exports.debug = true;
