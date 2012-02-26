@@ -1,18 +1,10 @@
-var settings = require('./settings');
-
-var redis = require('redis');
-if (process.env.REDISTOGO_URL) {
-	//var redis = require('redis-url').connect(process.env.REDISTOGO_URL);
-	
-	//var redis = require("redis"); //.createClient(rtg.port, rtg.hostname);
-	redis.auth(settings.REDIS_AUTH);
-}
 var fs = require('fs'),
     jade = require('jade'),
     //io = require('socket.io'),
-    //settings = require('./settings'),
+    settings = require('./settings'),
     helpers = require('./helpers'),
     app = settings.app,
+	redis = require('redis'),
     subscriptionPattern = 'channel:*',
     //socket = io.listen(app);
 	// socket.io v7+ change
@@ -29,8 +21,12 @@ app.listen(3000);
 // notifying us of new updates.
 
 var redisClient = redis.createClient(settings.REDIS_PORT, settings.REDIS_HOST);
-
 var pubSubClient = redis.createClient(settings.REDIS_PORT, settings.REDIS_HOST);
+if (process.env.REDISTOGO_URL) {
+	redisClient.auth(settings.REDIS_AUTH);
+	pubSubClient.auth(settings.REDIS_AUTH);
+}
+
 pubSubClient.psubscribe(subscriptionPattern);
 
 pubSubClient.on('pmessage', function(pattern, channel, message){
