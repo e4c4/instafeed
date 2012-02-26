@@ -4,7 +4,7 @@ var fs = require('fs'),
     settings = require('./settings'),
     helpers = require('./helpers'),
     app = settings.app,
-	//redis = require('redis'),
+	redis = require('redis'),
     subscriptionPattern = 'channel:*',
     //socket = io.listen(app);
 	// socket.io v7+ change
@@ -16,10 +16,8 @@ var fs = require('fs'),
 	});
 
 if (process.env.REDISTOGO_URL) {
-	var redis = require('redis-url').connect(process.env.REDISTOGO_URL);
 	app.listen();
 } else {
-	var redis = require('redis');
 	app.listen(3000);
 }
 
@@ -30,7 +28,13 @@ var redisClient = redis.createClient(settings.REDIS_PORT, settings.REDIS_HOST);
 var pubSubClient = redis.createClient(settings.REDIS_PORT, settings.REDIS_HOST);
 if (process.env.REDISTOGO_URL) {
 	redisClient.auth(settings.REDIS_AUTH);
+	redisClient.on("error",function(err){
+	    console.log("REDIS CLIENT ERROR:" + err + '\n\n' + err.stack);
+	    });
 	pubSubClient.auth(settings.REDIS_AUTH);
+	pubSubClient.on("error",function(err){
+	    console.log("PUBSUB CLIENT ERROR:" + err + '\n\n' + err.stack);
+	    });
 }
 
 pubSubClient.psubscribe(subscriptionPattern);
