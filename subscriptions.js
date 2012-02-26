@@ -35,6 +35,8 @@ pubSubClient.on('pmessage', function(pattern, channel, message){
         // san-francisco turns into san francisco. Nothing fancy, just
         // works.
         var channelName = channel.split(':')[1].replace(/-/g, ' ');
+		console.log('channel is: ' + channel);
+		console.log('channelName is: ' + channelName);
       } catch (e) {
 		  console.log('CAUGHT ERROR PARSING JSON');
           return;
@@ -44,7 +46,7 @@ pubSubClient.on('pmessage', function(pattern, channel, message){
     for(index in data){
         var media = data[index];
         media.meta = {};
-        media.meta.location = channelName;
+        media.meta.location = channelName; // for tags it should be media.meta.tag
         redisClient.lpush('media:objects', JSON.stringify(media));
     }
     
@@ -55,12 +57,15 @@ pubSubClient.on('pmessage', function(pattern, channel, message){
       'channelName': channelName
     };
 	console.log('GONNA UPDATE SOCKET CLIENTS');
-	//io.sockets.emit('message', JSON.stringify(update));
+	helpers.debug("Sending to socket (type): " + update['type']);
+	helpers.debug("Sending to socket (media): " + update['media']);
+	helpers.debug("Sending to socket (channelName): " + update['channelName']);
+	io.sockets.send(JSON.stringify(update));
 	// socket.io v7+ update
-	for(sessionId in io.sockets.sockets){
+	/*for(sessionId in io.sockets.sockets){
 	  console.log('UPDATING SOCKET CLIENT THE NEW WAY');
       io.sockets.sockets[sessionId].json.emit('message', JSON.stringify(update));
-    }
+    }*/
 	// original (old) way
     /*for(sessionId in socket.clients){
 	  console.log('UPDATING SOCKET CLIENT');

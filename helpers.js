@@ -91,6 +91,71 @@ function processGeography(geoName, update){
 }
 exports.processGeography = processGeography;
 
+/* 
+	get the tagged media from Instagram -- tag version of processGeography 
+*/
+
+function processTag(tagName, update){
+  var path = '/v1/tags/' + update.object_id + '/media/recent/';
+  getMinID(tagName, function(error, minID){
+    var queryString = "?client_id="+ settings.CLIENT_ID;
+    if(minID){
+		console.log('minID is present for api call');
+      //queryString += '&min_id=' + minID;
+		//queryString += '&min_tag_id=' + minID;
+    } else {
+		console.log('no minID for api call');
+        // If this is the first update, just grab the most recent.
+      	//queryString += '&count=1';
+		//queryString += '&min_tag_id=134086694019836510_16982601';
+    }
+    var options = {
+      host: settings.apiHost,
+      // Note that in all implementations, basePath will be ''. Here at
+      // instagram, this aint true ;)
+      path: settings.basePath + path + queryString
+    };
+    if(settings.apiPort){
+        options['port'] = settings.apiPort;
+    }
+
+        // Asynchronously ask the Instagram API for new media for a given
+        // geography.
+    debug("processTag: getting " + options.path);
+    settings.httpClient.get(options, function(response){
+      var data = '';
+      response.on('data', function(chunk){
+        debug("Got data...");
+        data += chunk;
+      });
+      response.on('end', function(){
+        debug("Got end.");
+          try {
+			// trying to remove invalid utf-8 chars... doesn't seem to help
+			//var re = /(?![\x00-\x7F]|[\xC0-\xDF][\x80-\xBF]|[\xE0-\xEF][\x80-\xBF]{2}|[\xF0-\xF7][\x80-\xBF]{3})./g;
+			//data = data.replace(re, "")
+			data = unescape(encodeURIComponent(data));
+            var parsedResponse = JSON.parse(data);
+          } catch (e) {
+              console.log('Couldn\'t parse data. Malformed?');
+              return;
+          }
+        if(!parsedResponse || !parsedResponse['data']){
+            console.log('Did not receive data for ' + tagName +':');
+            console.log(data);
+            return;
+        }
+        //setMinID(tagName, parsedResponse['data']);
+        
+        // Let all the redis listeners know that we've got new media.
+        redisClient.publish('channel:' + tagName, data);
+        debug("Published: " + data);
+      });
+    });
+  });
+}
+exports.processTag = processTag;
+
 function getMedia(callback){
     // This function gets the most recent media stored in redis
   redisClient.lrange('media:objects', 0, 14, function(error, media){
@@ -128,10 +193,15 @@ function setMinID(geoName, data){
     });
     var nextMinID;
     try {
+		console.log('going to set nextMinID');
+		console.log('data is:');
+		console.log(sorted);
         nextMinID = parseInt(sorted[0].id);
-      redisClient.set('min-id:channel:' + geoName, nextMinID);
+		console.log('set nextMinID');
+      	redisClient.set('min-id:channel:' + geoName, nextMinID);
+		console.log('set Redis min-id:channel');
     } catch (e) {
-        console.log('Error parsing min ID');
+        console.log('Error parsing min ID for: ' + geoName);
         console.log(sorted);
     }
 }
