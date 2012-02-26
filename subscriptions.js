@@ -4,7 +4,7 @@ var fs = require('fs'),
     settings = require('./settings'),
     helpers = require('./helpers'),
     app = settings.app,
-	redis = require('redis'),
+	//redis = require('redis'),
     subscriptionPattern = 'channel:*',
     //socket = io.listen(app);
 	// socket.io v7+ change
@@ -16,16 +16,18 @@ var fs = require('fs'),
 	});
 
 if (process.env.REDISTOGO_URL) {
+	var redis = require('redis-url').connect(process.env.REDISTOGO_URL);
 	app.listen();
 } else {
+	var redis = require('redis');
 	app.listen(3000);
 }
 
 // We use Redis's pattern subscribe command to listen for signals
 // notifying us of new updates.
 
-var redisClient = redis.createClient(settings.REDIS_PORT, settings.REDIS_HOST, {no_ready_check: true});
-var pubSubClient = redis.createClient(settings.REDIS_PORT, settings.REDIS_HOST, {no_ready_check: true});
+var redisClient = redis.createClient(settings.REDIS_PORT, settings.REDIS_HOST);
+var pubSubClient = redis.createClient(settings.REDIS_PORT, settings.REDIS_HOST);
 if (process.env.REDISTOGO_URL) {
 	redisClient.auth(settings.REDIS_AUTH);
 	pubSubClient.auth(settings.REDIS_AUTH);
