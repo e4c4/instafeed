@@ -1,3 +1,5 @@
+var settings = require('./settings');
+
 var redis = require('redis');
 if (process.env.REDISTOGO_URL) {
 	//var redis = require('redis-url').connect(process.env.REDISTOGO_URL);
@@ -8,7 +10,7 @@ if (process.env.REDISTOGO_URL) {
 var fs = require('fs'),
     jade = require('jade'),
     //io = require('socket.io'),
-    settings = require('./settings'),
+    //settings = require('./settings'),
     helpers = require('./helpers'),
     app = settings.app,
     subscriptionPattern = 'channel:*',
