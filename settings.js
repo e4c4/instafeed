@@ -4,7 +4,7 @@ var express = require('express');
 var app = express.createServer();
 exports.app = app;
 
-exports.appPort = process.env.IG_APP_PORT || 3000;
+exports.appPort = process.env.PORT || 3000;
 exports.CLIENT_ID = process.env.IG_CLIENT_ID || 'CLIENT_ID'
 exports.CLIENT_SECRET = process.env.IG_CLIENT_SECRET || 'CLIENT_SECRET';
 exports.CALLBACK_HOST = process.env.IG_CALLBACK_HOST;
