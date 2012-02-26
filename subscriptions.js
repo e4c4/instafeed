@@ -24,12 +24,20 @@ if (process.env.REDISTOGO_URL) {
 // We use Redis's pattern subscribe command to listen for signals
 // notifying us of new updates.
 
-var redisClient = redis.createClient(9310, "cod.redistogo.com");
-var pubSubClient = redis.createClient(9310, "cod.redistogo.com");
+/*var redisClient = redis.createClient(settings.REDIS_PORT, settings.REDIS_HOST);
+var pubSubClient = redis.createClient(settings.REDIS_PORT, settings.REDIS_HOST);
 if (process.env.REDISTOGO_URL) {
-	redisClient.auth("cc67649b599c9566c2876145fb1d75af");
-	pubSubClient.auth("cc67649b599c9566c2876145fb1d75af");
+	redisClient.auth(settings.REDIS_AUTH);
+	pubSubClient.auth(settings.REDIS_AUTH);
+}*/
+if (process.env.REDISTOGO_URL) {
+	var redisClient = require('redis-url').createClient(process.env.REDISTOGO_URL);
+	var pubSubClient = require('redis-url').createClient(process.env.REDISTOGO_URL);
+} else {
+	var redisClient = redis.createClient(settings.REDIS_PORT, settings.REDIS_HOST);
+	var pubSubClient = redis.createClient(settings.REDIS_PORT, settings.REDIS_HOST);
 }
+
 
 pubSubClient.psubscribe(subscriptionPattern);
 
