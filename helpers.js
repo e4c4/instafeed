@@ -4,6 +4,12 @@ var crypto = require('crypto');
 
 var redisClient = redis.createClient(settings.REDIS_PORT, settings.REDIS_HOST);
 
+if (process.env.REDISTOGO_URL) {
+	var redisClient = require('redis-url').createClient(process.env.REDISTOGO_URL);
+} else {
+	var redisClient = redis.createClient(settings.REDIS_PORT, settings.REDIS_HOST);
+}
+
 function isValidRequest(request) {
     // First, let's verify the payload's integrity by making sure it's
     // coming from a trusted source. We use the client secret as the key
