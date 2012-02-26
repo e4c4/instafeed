@@ -5,9 +5,9 @@ var crypto = require('crypto');
 //var redisClient = redis.createClient(settings.REDIS_PORT, settings.REDIS_HOST);
 
 if (process.env.REDISTOGO_URL) {
-	var redisClient = require('redis-url').createClient(process.env.REDISTOGO_URL);
+	var redisClient2 = require('redis-url').createClient(process.env.REDISTOGO_URL);
 } else {
-	var redisClient = redis.createClient(settings.REDIS_PORT, settings.REDIS_HOST);
+	var redisClient2 = redis.createClient(settings.REDIS_PORT, settings.REDIS_HOST);
 }
 
 function isValidRequest(request) {
@@ -89,7 +89,7 @@ function processGeography(geoName, update){
         setMinID(geoName, parsedResponse['data']);
         
         // Let all the redis listeners know that we've got new media.
-        redisClient.publish('channel:' + geoName, data);
+        redisClient2.publish('channel:' + geoName, data);
         debug("Published: " + data);
       });
     });
@@ -154,7 +154,7 @@ function processTag(tagName, update){
         //setMinID(tagName, parsedResponse['data']);
         
         // Let all the redis listeners know that we've got new media.
-        redisClient.publish('channel:' + tagName, data);
+        redisClient2.publish('channel:' + tagName, data);
         debug("Published: " + data);
       });
     });
@@ -164,7 +164,7 @@ exports.processTag = processTag;
 
 function getMedia(callback){
     // This function gets the most recent media stored in redis
-  redisClient.lrange('media:objects', 0, 14, function(error, media){
+  redisClient2.lrange('media:objects', 0, 14, function(error, media){
       debug("getMedia: got " + media.length + " items");
       // Parse each media JSON to send to callback
       media = media.map(function(json){return JSON.parse(json);});
@@ -189,7 +189,7 @@ exports.getMedia = getMedia;
 */
 
 function getMinID(geoName, callback){
-  redisClient.get('min-id:channel:' + geoName, callback);
+  redisClient2.get('min-id:channel:' + geoName, callback);
 }
 exports.getMinID = getMinID;
 
@@ -204,7 +204,7 @@ function setMinID(geoName, data){
 		console.log(sorted);
         nextMinID = parseInt(sorted[0].id);
 		console.log('set nextMinID');
-      	redisClient.set('min-id:channel:' + geoName, nextMinID);
+      	redisClient2.set('min-id:channel:' + geoName, nextMinID);
 		console.log('set Redis min-id:channel');
     } catch (e) {
         console.log('Error parsing min ID for: ' + geoName);
