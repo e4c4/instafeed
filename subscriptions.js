@@ -45,7 +45,7 @@ if (process.env.REDISTOGO_URL) {
 	}
 
 	var redisClient = newRedisClient();
-	var pubSubClient = newRedisClient(L);
+	var pubSubClient = newRedisClient();
 } else {
 	var redisClient = redis.createClient(settings.REDIS_PORT, settings.REDIS_HOST);
 	var pubSubClient = redis.createClient(settings.REDIS_PORT, settings.REDIS_HOST);
