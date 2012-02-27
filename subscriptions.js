@@ -5,6 +5,7 @@ var fs = require('fs'),
     helpers = require('./helpers'),
     app = settings.app,
 	redis = require('redis'),
+	redistogo = require('redis-url'),
     subscriptionPattern = 'channel:*',
     //socket = io.listen(app);
 	// socket.io v7+ change
@@ -34,7 +35,8 @@ if (process.env.REDISTOGO_URL) {
 	//var redisClient = require('redis-url').createClient(process.env.REDISTOGO_URL);
 	//var pubSubClient = require('redis-url').createClient(process.env.REDISTOGO_URL);
 	function newRedisClient(redisConfig) {
-		var client = redis.createClient(redisConfig.port, redisConfig.host);
+		//var client = redis.createClient(redisConfig.port, redisConfig.host);
+		var client = redistogo.createClient(redisConfig);
 		var clientAuth = function() { client.auth(redisConfig.password); }
 		client.addListener('connected', clientAuth);
 		client.addListener('reconnected', clientAuth);
