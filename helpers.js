@@ -1,4 +1,4 @@
-//var redis = require('redis');
+var redis = require('redis');
 var redistogo = require('redis-url');
 var settings = require('./settings');
 var crypto = require('crypto');
@@ -7,16 +7,16 @@ var crypto = require('crypto');
 
 if (process.env.REDISTOGO_URL) {
 	//var redisClient2 = require('redis-url').createClient(process.env.REDISTOGO_URL);
-	/*function newRedisClient(redisConfig) {
+	function newRedisClient(redisConfig) {
 		//var client = redis.createClient(redisConfig.port, redisConfig.host);
-		var client = redistogo.createClient(redisConfig);
+		var client = require('redis-url').createClient(redisConfig);
 		var clientAuth = function() { client.auth(redisConfig.password); }
 		client.addListener('connected', clientAuth);
 		client.addListener('reconnected', clientAuth);
 		clientAuth();
 		return client;
-	}*/
-	var redisClient2 = require('redis-url').createClient(process.env.REDISTOGO_URL); //newRedisClient(process.env.REDISTOGO_URL);
+	}
+	var redisClient2 = newRedisClient(process.env.REDISTOGO_URL);
 } else {
 	var redisClient2 = redis.createClient(settings.REDIS_PORT, settings.REDIS_HOST);
 }
