@@ -35,8 +35,8 @@ if (process.env.REDISTOGO_URL) {
 	//var redisClient = require('redis-url').createClient(process.env.REDISTOGO_URL);
 	//var pubSubClient = require('redis-url').createClient(process.env.REDISTOGO_URL);
 	function newRedisClient(redisConfig) {
-		var client = redis.createClient(redisConfig.port, redisConfig.host);
-		var clientAuth = function() { client.auth(process.env.REDISTOGO_URL.password); }
+		var client = redis.createClient(9310, 'cod.redistogo.com');
+		var clientAuth = function() { client.auth('cc67649b599c9566c2876145fb1d75af'); }
 		client.addListener('connected', clientAuth);
 		client.addListener('reconnected', clientAuth);
 		clientAuth();
