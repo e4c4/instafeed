@@ -34,7 +34,7 @@ if (process.env.REDISTOGO_URL) {
 if (process.env.REDISTOGO_URL) {
 	//var redisClient = require('redis-url').createClient(process.env.REDISTOGO_URL);
 	//var pubSubClient = require('redis-url').createClient(process.env.REDISTOGO_URL);
-	function newRedisClient(redisConfig) {
+	/*function newRedisClient(redisConfig) {
 		//var client = redis.createClient(redisConfig.port, redisConfig.host);
 		var client = redistogo.createClient(redisConfig);
 		var clientAuth = function() { client.auth(redisConfig.password); }
@@ -42,10 +42,10 @@ if (process.env.REDISTOGO_URL) {
 		client.addListener('reconnected', clientAuth);
 		clientAuth();
 		return client;
-	}
+	}*/
 
-	var redisClient = newRedisClient(process.env.REDISTOGO_URL);
-	var pubSubClient = newRedisClient(process.env.REDISTOGO_URL);
+	var redisClient = require('redis-url').createClient(process.env.REDISTOGO_URL); //newRedisClient(process.env.REDISTOGO_URL);
+	var pubSubClient = require('redis-url').createClient(process.env.REDISTOGO_URL); //newRedisClient(process.env.REDISTOGO_URL);
 } else {
 	var redisClient = redis.createClient(settings.REDIS_PORT, settings.REDIS_HOST);
 	var pubSubClient = redis.createClient(settings.REDIS_PORT, settings.REDIS_HOST);
