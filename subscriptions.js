@@ -49,7 +49,7 @@ if (process.env.REDISTOGO_URL) {
 	var clientAuth = function() { pubSubClient.auth(process.env.REDISTOGO_URL.password); }
 	pubSubClient.addListener('connected', clientAuth);
 	pubSubClient.addListener('reconnected', clientAuth);
-	clientAuth();
+	//clientAuth();
 } else {
 	var redisClient = redis.createClient(settings.REDIS_PORT, settings.REDIS_HOST);
 	var pubSubClient = redis.createClient(settings.REDIS_PORT, settings.REDIS_HOST);
