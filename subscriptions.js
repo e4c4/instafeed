@@ -34,22 +34,16 @@ if (process.env.REDISTOGO_URL) {
 if (process.env.REDISTOGO_URL) {
 	//var redisClient = require('redis-url').createClient(process.env.REDISTOGO_URL);
 	//var pubSubClient = require('redis-url').createClient(process.env.REDISTOGO_URL);
-	function newRedisClient() {
-		//var client = redis.createClient(redisConfig.port, redisConfig.host);
-		var client = require('redis-url').createClient(process.env.REDISTOGO_URL);
+	function newRedisClient(redisConfig) {
+		var client = redis.createClient(redisConfig.port, redisConfig.host);
 		var clientAuth = function() { client.auth(process.env.REDISTOGO_URL.password); }
-		//client.addListener('connected', clientAuth);
-		//client.addListener('reconnected', clientAuth);
-		//clientAuth();
+		client.addListener('connected', clientAuth);
+		client.addListener('reconnected', clientAuth);
+		clientAuth();
 		return client;
 	}
-
-	var redisClient = newRedisClient();
-	var pubSubClient = newRedisClient();
-	var clientAuth = function() { pubSubClient.auth(process.env.REDISTOGO_URL.password); }
-	pubSubClient.addListener('connected', clientAuth);
-	pubSubClient.addListener('reconnected', clientAuth);
-	//clientAuth();
+	var redisClient = require('redis-url').createClient(process.env.REDISTOGO_URL);
+	var pubSubClient = newRedisClient(process.env.REDISTOGO_URL);
 } else {
 	var redisClient = redis.createClient(settings.REDIS_PORT, settings.REDIS_HOST);
 	var pubSubClient = redis.createClient(settings.REDIS_PORT, settings.REDIS_HOST);
