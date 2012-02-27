@@ -11,9 +11,9 @@ if (process.env.REDISTOGO_URL) {
 		//var client = redis.createClient(redisConfig.port, redisConfig.host);
 		var client = require('redis-url').createClient(process.env.REDISTOGO_URL);
 		var clientAuth = function() { client.auth(process.env.REDISTOGO_URL.password); }
-		client.addListener('connected', clientAuth);
-		client.addListener('reconnected', clientAuth);
-		clientAuth();
+		//client.addListener('connected', clientAuth);
+		//client.addListener('reconnected', clientAuth);
+		//clientAuth();
 		return client;
 	}
 	var redisClient2 = newRedisClient();
