@@ -81,7 +81,7 @@ pubSubClient.on('pmessage', function(pattern, channel, message){
         media.meta.location = channelName; // for tags it should be media.meta.tag
         redisClient.lpush('media:objects', JSON.stringify(media));
 		// trim the list so that Redis instance does not blow up since we are using a small free one
-		redisClient.ltrim('media:objects', 999);
+		redisClient.ltrim('media:objects', 0, 999);
     }
     
     // Send out whole update to the listeners
