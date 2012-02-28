@@ -80,6 +80,8 @@ pubSubClient.on('pmessage', function(pattern, channel, message){
         media.meta = {};
         media.meta.location = channelName; // for tags it should be media.meta.tag
         redisClient.lpush('media:objects', JSON.stringify(media));
+		// trim the list so that Redis instance does not blow up since we are using a small free one
+		redisClient.ltrim('media:objects', 999);
     }
     
     // Send out whole update to the listeners
@@ -92,12 +94,12 @@ pubSubClient.on('pmessage', function(pattern, channel, message){
 	helpers.debug("Sending to socket (type): " + update['type']);
 	helpers.debug("Sending to socket (media): " + update['media']);
 	helpers.debug("Sending to socket (channelName): " + update['channelName']);
-	io.sockets.send(JSON.stringify(update));
+	//io.sockets.send(JSON.stringify(update));
 	// socket.io v7+ update
-	/*for(sessionId in io.sockets.sockets){
+	for(sessionId in io.sockets.sockets){
 	  console.log('UPDATING SOCKET CLIENT THE NEW WAY');
       io.sockets.sockets[sessionId].json.emit('message', JSON.stringify(update));
-    }*/
+    }
 	// original (old) way
     /*for(sessionId in socket.clients){
 	  console.log('UPDATING SOCKET CLIENT');
