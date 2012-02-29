@@ -176,8 +176,8 @@ exports.processTag = processTag;
 
 function getMedia(callback){
     // This function gets the most recent media stored in redis
-  redisClient2.lrange('media:objects', 0, 14, function(error, media){
-      debug("getMedia: got " + media.length + " items");
+  redisClient2.lrange('media:objects', 0, 19, function(error, media){
+      //debug("getMedia: got " + media.length + " items");
       // Parse each media JSON to send to callback
       media = media.map(function(json){return JSON.parse(json);});
       callback(error, media);
