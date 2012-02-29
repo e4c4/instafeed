@@ -89,6 +89,7 @@ app.post('/callbacks/tag/:tagName', function(request, response){
 app.get('/:tagName', function(request, response){
   console.log('POST client_id=' + settings.CLIENT_ID + '&client_secret=' + settings.CLIENT_SECRET + '&object=tag&object_id=' + request.params.tagName + '&aspect=media&callback_url=http://' + settings.CALLBACK_HOST + '/callbacks/tag/' + request.params.tagName);
   // POST term to Instagram to create subscription
+  var querystring = require('querystring');
   var post_data = querystring.stringify({
 	'client_id' : settings.CLIENT_ID,
 	'client_secret' : settings.CLIENT_SECRET,
