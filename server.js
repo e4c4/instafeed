@@ -87,6 +87,7 @@ app.post('/callbacks/tag/:tagName', function(request, response){
 
 // Accept a param on the home page for the term tag to use for grabbing images
 app.get('/:tagName', function(request, response){
+  console.log('POST client_id=' + settings.IG_CLIENT_ID + '&client_secret=' + settings.IG_CLIENT_SECRET + '&object=tag&object_id=' + request.params.tagName + '&aspect=media&callback_url=http://' + settings.IG_CALLBACK_HOST + '/callbacks/tag/' + request.params.tagName);
   // POST term to Instagram to create subscription
   var opts = {
     host: 'api.instagram.com',
@@ -98,6 +99,7 @@ app.get('/:tagName', function(request, response){
   var req = https.request(opts);
   req.write('client_id=' + settings.IG_CLIENT_ID + '&client_secret=' + settings.IG_CLIENT_SECRET + '&object=tag&object_id=' + request.params.tagName + '&aspect=media&callback_url=http://' + settings.IG_CALLBACK_HOST + '/callbacks/tag/' + request.params.tagName);
   req.end();
+  console.log('finished POST to subscribe to Instagram');
 
   helpers.getMedia(function(error, media){
   response.render('geo.jade', {
