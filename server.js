@@ -90,14 +90,14 @@ app.get('/:tagName', function(request, response){
   if (request.params.tagName != "favicon.ico") {
 	  console.log('POST client_id=' + settings.CLIENT_ID + '&client_secret=' + settings.CLIENT_SECRET + '&object=tag&object_id=' + request.params.tagName + '&aspect=media&callback_url=http://' + settings.CALLBACK_HOST + '/callbacks/tag/' + request.params.tagName);
 	  // POST term to Instagram to create subscription
-	  var querystring = require('querystring');
+	  /*var querystring = require('querystring');
 	  var post_data = querystring.stringify({
 		'client_id' : settings.CLIENT_ID,
 		'client_secret' : settings.CLIENT_SECRET,
 		'object' : 'tag',
-		'object_id' : 'cat',
+		'object_id' : request.params.tagName,
 		'aspect' : 'media',
-		'callback_url' : 'http://' + settings.CALLBACK_HOST + '/callbacks/tag/' + 'cat'
+		'callback_url' : 'http://' + settings.CALLBACK_HOST + '/callbacks/tag/' + request.params.tagName
 	  });
   
 	  var post_options = {
@@ -106,7 +106,7 @@ app.get('/:tagName', function(request, response){
 	    method: 'POST',
 	    path: '/v1/subscriptions/',
 	    headers: {
-			'Content-Type': 'application/x-www-form-urlencoded',
+			'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8',
 			'Content-Length': post_data.length
 		}
 	  };
@@ -118,7 +118,33 @@ app.get('/:tagName', function(request, response){
 	  });
 	  post_req.write(post_data);
 	  post_req.end();
-	  console.log('finished POST to subscribe to Instagram');
+	  */
+	  // delete old subscriptions
+	  var delete_request = require('request');
+	  delete_request.del({url: 'https://api.instagram.com/v1/subscriptions?object=all&client_id=' + settings.CLIENT_ID + '&client_secret=' + settings.CLIENT_SECRET}, function (error, response, body) {
+	  	console.log("ERROR: " + error);
+		console.log("STATUS CODE: " + response.statusCode);
+	    console.log("MESSAGE: " + body);
+	  });
+	  console.log('finished GET subscription list from Instagram');
+
+	  // add new subscription
+	  var post_data = {
+		'client_id' : settings.CLIENT_ID,
+		'client_secret' : settings.CLIENT_SECRET,
+		'object' : 'tag',
+		'object_id' : request.params.tagName,
+		'aspect' : 'media',
+		'callback_url' : process.env.IG_CALLBACK_HOST + '/callbacks/tag/' + request.params.tagName
+	  };
+	
+	  var post_request = require('request');
+	  post_request.post({url: 'https://api.instagram.com/v1/subscriptions', form: post_data}, function (error, response, body) {
+	  	console.log("ERROR: " + error);
+		console.log("STATUS CODE: " + response.statusCode);
+	    console.log("MESSAGE: " + body);
+	  });
+	  console.log('finished POST to subscribe to Instagram');	
   }
   helpers.getMedia(function(error, media){
   response.render('geo.jade', {
