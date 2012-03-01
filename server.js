@@ -94,7 +94,7 @@ app.get('/:tagName', function(request, response){
 	'client_id' : settings.CLIENT_ID,
 	'client_secret' : settings.CLIENT_SECRET,
 	'object' : 'tag',
-	'object_id=' : 'cat',
+	'object_id' : 'cat',
 	'aspect' : 'media',
 	'callback_url' : 'http://' + settings.CALLBACK_HOST + '/callbacks/tag/' + 'cat'
   });
@@ -109,7 +109,12 @@ app.get('/:tagName', function(request, response){
 		'Content-Length': post_data.length
 	}
   };
-  var post_req = https.request(post_options);
+  var post_req = https.request(post_options, function(res) {
+      res.setEncoding('utf8');
+      res.on('data', function (chunk) {
+          console.log('POST Response: ' + chunk);
+      });
+  });
   post_req.write(post_data);
   post_req.end();
   console.log('finished POST to subscribe to Instagram');
