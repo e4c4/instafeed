@@ -6,6 +6,7 @@
     "jade": "0.20.3",
     "redis": "0.7.1",
     "redis-url": "0.0.1",
+	"request" : "2.9.152",
     "socket.io": "0.8.7"
   },
   "engines": {
