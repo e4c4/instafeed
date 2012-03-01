@@ -87,38 +87,39 @@ app.post('/callbacks/tag/:tagName', function(request, response){
 
 // Accept a param on the home page for the term tag to use for grabbing images
 app.get('/:tagName', function(request, response){
-  console.log('POST client_id=' + settings.CLIENT_ID + '&client_secret=' + settings.CLIENT_SECRET + '&object=tag&object_id=' + request.params.tagName + '&aspect=media&callback_url=http://' + settings.CALLBACK_HOST + '/callbacks/tag/' + request.params.tagName);
-  // POST term to Instagram to create subscription
-  var querystring = require('querystring');
-  var post_data = querystring.stringify({
-	'client_id' : settings.CLIENT_ID,
-	'client_secret' : settings.CLIENT_SECRET,
-	'object' : 'tag',
-	'object_id' : 'cat',
-	'aspect' : 'media',
-	'callback_url' : 'http://' + settings.CALLBACK_HOST + '/callbacks/tag/' + 'cat'
-  });
+  if (request.params.tagName != "favicon.ico") {
+	  console.log('POST client_id=' + settings.CLIENT_ID + '&client_secret=' + settings.CLIENT_SECRET + '&object=tag&object_id=' + request.params.tagName + '&aspect=media&callback_url=http://' + settings.CALLBACK_HOST + '/callbacks/tag/' + request.params.tagName);
+	  // POST term to Instagram to create subscription
+	  var querystring = require('querystring');
+	  var post_data = querystring.stringify({
+		'client_id' : settings.CLIENT_ID,
+		'client_secret' : settings.CLIENT_SECRET,
+		'object' : 'tag',
+		'object_id' : 'cat',
+		'aspect' : 'media',
+		'callback_url' : 'http://' + settings.CALLBACK_HOST + '/callbacks/tag/' + 'cat'
+	  });
   
-  var post_options = {
-    host: 'api.instagram.com',
-    port: 443,
-    method: 'POST',
-    path: '/v1/subscriptions/',
-    headers: {
-		'Content-Type': 'application/x-www-form-urlencoded',
-		'Content-Length': post_data.length
-	}
-  };
-  var post_req = https.request(post_options, function(res) {
-      res.setEncoding('utf8');
-      res.on('data', function (chunk) {
-          console.log('POST Response: ' + chunk);
-      });
-  });
-  post_req.write(post_data);
-  post_req.end();
-  console.log('finished POST to subscribe to Instagram');
-
+	  var post_options = {
+	    host: 'api.instagram.com',
+	    port: 443,
+	    method: 'POST',
+	    path: '/v1/subscriptions/',
+	    headers: {
+			'Content-Type': 'application/x-www-form-urlencoded',
+			'Content-Length': post_data.length
+		}
+	  };
+	  var post_req = https.request(post_options, function(res) {
+	      res.setEncoding('utf8');
+	      res.on('data', function (chunk) {
+	          console.log('POST Response: ' + chunk);
+	      });
+	  });
+	  post_req.write(post_data);
+	  post_req.end();
+	  console.log('finished POST to subscribe to Instagram');
+  }
   helpers.getMedia(function(error, media){
   response.render('geo.jade', {
         locals: { images: media, tag: request.params.tagName }
