@@ -154,7 +154,7 @@ a:hover {
 		opacity:1;
 		-webkit-transition: opacity 1s linear;
 	}
-	
+
 	to {
 		opacity:0;
 	}

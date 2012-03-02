@@ -8,11 +8,32 @@ socket.on('message', function(update){
   $(document).trigger(data);
 });
 
+var latest = [];
+var latest_count = 0;
+
+// set timer and when the timer goes off, append img tags for imageList
+var timer = setTimeout("latestAgain()", 5000);
+
+function latestAgain() {
+  jQuery.each(latest, function(i, val) {
+    $('#wrapper').append(
+      '<div class="container"><img src='+val+' width="200" height="200"></div>');
+  });
+  timer = setTimeout("latestAgain()", 10000);
+}
+
 var Media = {
     onNewMedia: function(ev) {
       $(ev.media).each(function(index, media) {
+        clearTimeout(timer);
         var numChildren = $('#wrapper').children().length;
         var index = Math.floor(Math.random() * numChildren);
+        
+        // reset the timer and update imageList with the new image
+        if (latest_count == 20)
+          latest_count = 0;
+        latest[latest_count] = media.images.low_resolution.url;
+        latest_count++;
         
         if(index % 2 == 0) {
           //index = index + numChildren/10;
@@ -23,12 +44,15 @@ var Media = {
         } else {
           $('#wrapper').append(
               '<div class="container"><img src='+media.images.low_resolution.url+' width="200" height="200"></div>'
-          ); 
+          );
         }
+        
+        timer = setTimeout("latestAgain()", 10000);
       });
     },
     positionAll: function() {
       $(window).load(function(){autoScroller('wrapper', 1)});
+      latest = imageList;
     }
 };
 /*
